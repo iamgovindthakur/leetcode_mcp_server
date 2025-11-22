@@ -1,14 +1,18 @@
 # LeetCode MCP Example
 
-This repository contains a minimal example of an MCP-style HTTP server that exposes a `GET /daily` endpoint returning the LeetCode "Problem of the Day" (title, url, snippet). It is designed as a small example integrating with editor tooling (e.g., GitHub Copilot or an MCP client).
+Minimal example of an MCP-style HTTP server exposing `GET /daily` that returns the LeetCode "Problem of the Day" (title, url, snippet). This project is a small demo useful for editor integrations or as a template for feature experiments.
 
 Features
 - FastAPI application in the `leetcode_mcp` package
-- Robust fetch strategy: GraphQL endpoint first, then homepage parsing fallback
+- Fetch strategy: GraphQL first, then homepage parsing fallback
 - Configuration via environment variables (`LC_USER_AGENT`, `LC_TIMEOUT`)
-- Tests using `pytest` and `respx` for HTTP mocking
+- Tests using `pytest` and `respx` (HTTP mocking)
 
-Quickstart
+Prerequisites
+- Python 3.10+ (3.12 used in CI)
+- Docker (optional, if you want to run the container)
+
+Quickstart (local)
 
 1. Create and activate a virtual environment (macOS / zsh):
 
@@ -24,35 +28,53 @@ pip install -r requirements.txt
 uvicorn leetcode_mcp:app --host 127.0.0.1 --port 8080
 ```
 
-3. Health check:
+You can also use the `Makefile`:
+
+```bash
+make install   # creates .venv and installs deps
+make run       # starts uvicorn on 127.0.0.1:8080
+```
+
+Health check
 
 ```bash
 curl http://127.0.0.1:8080/health
 ```
 
-4. Get the daily problem:
+Get the daily problem
 
 ```bash
 curl http://127.0.0.1:8080/daily
 ```
 
-Compatibility shim
+Run with Docker
 
-The repository previously included a small compatibility shim module `leetcode_daily.py` that exposed the same `app` object as `leetcode_mcp`. That shim has been removed — use `leetcode_mcp:app` as shown above.
+```bash
+docker build -t leetcode-mcp:latest .
+docker run --rm -p 8080:8080 leetcode-mcp:latest
+```
 
 Testing
 
+Run tests from the repository root (ensure `PYTHONPATH=.` or activate the venv):
+
 ```bash
-pytest -q
+source .venv/bin/activate
+PYTHONPATH=. pytest -q
 ```
 
-Environment
+Configuration
 
-Set `LC_USER_AGENT` if you need to override the default user agent string.
+Set environment variables to adjust behavior:
+- `LC_USER_AGENT` — override the default User-Agent string used for requests to LeetCode.
+- `LC_TIMEOUT` — request timeout in seconds (defaults to `10.0`).
 
-Notes
-- This is a small demonstration project. For production use consider adding:
+Notes & production considerations
+- This is a demonstration project. For production readiness consider:
   - Structured logging and metrics
   - Retries/backoff and circuit-breakers for network calls
-  - More robust HTML parsing (e.g., BeautifulSoup) and schema validation
-  - CI pipeline and containerization
+  - More robust HTML parsing (e.g., BeautifulSoup) and stricter schema validation
+  - CI and container image scanning
+  - Adding a license and CONTRIBUTING guide
+
+If you want the repository to provide a named CLI (console script), I can add a `pyproject.toml` and a small packaging configuration.
