@@ -7,7 +7,7 @@ install:
 	. .venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt
 
 run:
-	uvicorn leetcode_daily:app --host 127.0.0.1 --port 8080
+	uvicorn leetcode_mcp:app --host 127.0.0.1 --port 8080
 
 test:
 	PYTHONPATH=. pytest -q

@@ -18,10 +18,10 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-2. Run the server locally:
+2. Run the server locally (package entrypoint):
 
 ```bash
-uvicorn leetcode_daily:app --host 127.0.0.1 --port 8080
+uvicorn leetcode_mcp:app --host 127.0.0.1 --port 8080
 ```
 
 3. Health check:
@@ -35,6 +35,10 @@ curl http://127.0.0.1:8080/health
 ```bash
 curl http://127.0.0.1:8080/daily
 ```
+
+Compatibility shim
+
+The repository previously included a small compatibility shim module `leetcode_daily.py` that exposed the same `app` object as `leetcode_mcp`. That shim has been removed — use `leetcode_mcp:app` as shown above.
 
 Testing
 
